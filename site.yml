@@ -24,6 +24,21 @@
         - httpd
       state: latest
 
+  - name: change e-mail addr for admin
+    tags: apache,rhel,httpd
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin risc@hotmail.net    
+    register: httpd
+
+  - name: restart httpd
+    tags: apache,rhel,httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed    
+
   - name: latest index.html file is present
     tags: apache,httpd
     copy:
@@ -34,9 +49,11 @@
       mode: 0644
 
   - name: httpd is started
+    tags: apache,rhel,httpd
     service: 
       name: httpd
-      state: started   
+      state: started  
+      enabled: yes
 
 - hosts: workstations 
   become: true
