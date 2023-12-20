@@ -4,12 +4,23 @@
   become: true
   pre_tasks:
 
-  - name: install updates
+  - name: update repo cache
     tags: always
     dnf: 
-      update_only: yes
       update_cache: yes
-    
+    changed_when: false
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key: 
+      user: simone
+      state: present
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHpuRvUhiEnCA5RsxNJRFVRiylfirxweO5ak1Qn4Bd5w ansible"
+
 - hosts: test_server
   become: true
   tasks:
