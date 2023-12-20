@@ -1,1 +1,5 @@
+[test_server]
 192.168.0.75
+
+[workstations]
+192.168.0.125
