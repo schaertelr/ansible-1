@@ -1,0 +1,46 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: instal updates
+    tags: always
+    dnf: 
+      update_only: yes
+      update_cache: yes
+    
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install and start apache
+    tags: apache,rhel,httpd,db,mariadb,samba
+    dnf: 
+      name: 
+        - httpd
+        - php
+        - mariadb
+        - samba
+      state: latest
+
+  tasks:
+  
+  - name: httpd package is present
+    yum: 
+      name: httpd
+      state: latest
+
+  - name: latest index.html file is present
+    tags: apache,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: httpd is started
+    service: 
+      name: httpd
+      state: started    
