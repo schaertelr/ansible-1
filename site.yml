@@ -12,69 +12,15 @@
 
 - hosts: all
   become: true
-  tasks:
-
-  - name: add ssh key for simone
-    tags: always
-    authorized_key: 
-      user: simone
-      state: present
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHpuRvUhiEnCA5RsxNJRFVRiylfirxweO5ak1Qn4Bd5w ansible"
+  roles:
+    - base
 
 - hosts: test_server
   become: true
-  tasks:
+  roles:
+    - test_server
 
-  - name: install apache, php, mariadb, samba
-    tags: apache,rhel,httpd,db,mariadb,samba
-    dnf: 
-      name: 
-        - php
-        - mariadb
-        - samba
-        - httpd
-      state: latest
-
-  - name: change e-mail addr for admin
-    tags: apache,rhel,httpd
-    lineinfile: 
-      path: /etc/httpd/conf/httpd.conf
-      regexp: '^ServerAdmin'
-      line: ServerAdmin risc@hotmail.net    
-    register: httpd
-
-  - name: restart httpd
-    tags: apache,rhel,httpd
-    service:
-      name: httpd
-      state: restarted
-    when: httpd.changed    
-
-  - name: latest index.html file is present
-    tags: apache,httpd
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
-
-  - name: httpd is started
-    tags: apache,rhel,httpd
-    service: 
-      name: httpd
-      state: started  
-      enabled: yes
-
-- hosts: workstations 
+- hosts: workstations
   become: true
-  tasks: 
-
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root  
+  roles: 
+    - workstations
