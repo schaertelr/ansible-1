@@ -1,0 +1,40 @@
+- name: install apache, php, mariadb, samba
+  tags: apache,rhel,httpd,db,mariadb,samba
+  dnf:
+    name:
+      - php
+      - mariadb
+      - samba
+      - httpd
+    state: latest
+
+- name: change e-mail addr for admin
+  tags: apache,rhel,httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin risc@hotmail.net
+  register: httpd
+
+- name: restart httpd
+  tags: apache,rhel,httpd
+  service:
+    name: httpd
+    state: restarted
+  when: httpd.changed
+
+- name: latest index.html file is present
+  tags: apache,httpd
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
+
+- name: httpd is started
+  tags: apache,rhel,httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
