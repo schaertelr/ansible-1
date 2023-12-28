@@ -2,10 +2,10 @@
   tags: apache,rhel,httpd,db,mariadb,samba
   dnf:
     name:
-      - php
+      - "{{ apache_package_name }}"
       - mariadb
-      - samba
-      - httpd
+      - "{{ samba_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
 
 - name: change e-mail addr for admin
@@ -13,15 +13,8 @@
   lineinfile:
     path: /etc/httpd/conf/httpd.conf
     regexp: '^ServerAdmin'
-    line: ServerAdmin risc@hotmail.net
-  register: httpd
-
-- name: restart httpd
-  tags: apache,rhel,httpd
-  service:
-    name: httpd
-    state: restarted
-  when: httpd.changed
+    line: ServerAdmin somebody@hotmail.com
+  notify: restart_apache
 
 - name: latest index.html file is present
   tags: apache,httpd
@@ -35,6 +28,6 @@
 - name: httpd is started
   tags: apache,rhel,httpd
   service:
-    name: httpd
+    name: "{{ apache_service }}"
     state: started
     enabled: yes
