@@ -1,0 +1,7 @@
+#apache_package_name: httpd
+#apache_service: httpd
+#php_package_name: php
+#samba_package_name: samba
+ssh_users: "risc simone"
+ssh_template_file: sshd_config_rhel.j2
+
